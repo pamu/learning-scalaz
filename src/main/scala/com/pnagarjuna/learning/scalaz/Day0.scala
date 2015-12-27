@@ -35,6 +35,16 @@ object Day0 {
 
     coolPlus(Cat("pamu"), Cat("nagarjuna")) pln
 
+    implicit object IntMonoid1 extends Monoid[Int] {
+
+      override def mappend(a1: Int, a2: Int): Int = a1 + a2
+
+      override def mzero: Int = 0
+
+    }
+
+    sum2(List(1, 2, 3)) pln
+
   }
 
   /**
@@ -78,5 +88,25 @@ object Day0 {
     * @return
     */
   def coolPlus[A: CoolPlus](a1: A, a2: A): A = implicitly[CoolPlus[A]].coolPlus(a1, a2)
+
+  //good old foldLeft does the summing work of list of ints
+  def sum(xs: List[Int]): Int = xs.foldLeft(0) { _ + _ }
+
+  object IntMonoid {
+    def mappend(a1: Int, a2: Int): Int = a1 + a2
+    def mzero = 0
+  }
+
+  def sum1(xs: List[Int]): Int = xs.foldLeft(IntMonoid.mzero) { IntMonoid.mappend( _, _ ) }
+
+  trait Monoid[A] {
+    def mappend(a1: A, a2: A): A
+    def mzero: A
+  }
+
+  def sum2[A: Monoid](xs: List[A]): A = {
+    val m = implicitly[Monoid[A]]
+    xs.foldLeft(m.mzero)(m.mappend)
+  }
 
 }
