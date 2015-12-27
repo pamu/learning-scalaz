@@ -35,15 +35,19 @@ object Day0 {
 
     coolPlus(Cat("pamu"), Cat("nagarjuna")) pln
 
-    implicit object IntMonoid1 extends Monoid[Int] {
-
+    implicit val intMonoid = new Monoid[Int] {
       override def mappend(a1: Int, a2: Int): Int = a1 + a2
 
       override def mzero: Int = 0
-
     }
 
     sum2(List(1, 2, 3)) pln
+
+    implicit val FoldLeftList: FoldLeft[List] = new FoldLeft[List] {
+      override def foldLeft[A, B](xs: List[A], b: B, f: (B, A) => B): B = xs.foldLeft(b)(f)
+    }
+
+    sum3(List(1, 2, 3, 4, 5)) pln
 
   }
 
@@ -93,20 +97,42 @@ object Day0 {
   def sum(xs: List[Int]): Int = xs.foldLeft(0) { _ + _ }
 
   object IntMonoid {
+
     def mappend(a1: Int, a2: Int): Int = a1 + a2
+
     def mzero = 0
+
   }
 
   def sum1(xs: List[Int]): Int = xs.foldLeft(IntMonoid.mzero) { IntMonoid.mappend( _, _ ) }
 
   trait Monoid[A] {
+
     def mappend(a1: A, a2: A): A
+
     def mzero: A
+
   }
 
   def sum2[A: Monoid](xs: List[A]): A = {
     val m = implicitly[Monoid[A]]
     xs.foldLeft(m.mzero)(m.mappend)
+  }
+
+  //Generalising on FoldLeft operation
+
+  trait FoldLeft[F[_]] {
+    def foldLeft[A, B](xs: F[A], b: B, f: (B, A) => B): B
+  }
+
+  def sum3[M[_]: FoldLeft, A: Monoid](xs: M[A]): A = {
+
+    val m = implicitly[Monoid[A]]
+
+    val fl = implicitly[FoldLeft[M]]
+
+    fl.foldLeft(xs, m.mzero, m.mappend)
+
   }
 
 }
