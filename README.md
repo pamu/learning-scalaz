@@ -1,0 +1,2 @@
+# learning-scalaz
+Learning Scalaz
