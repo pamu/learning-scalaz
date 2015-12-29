@@ -14,7 +14,8 @@ object LearningFunctor {
     def identity[F[_], A](xs: F[A])(implicit functor: Functor[F]) =
       functor.map(xs)(elem => elem) == xs
 
-    def composition[F[_], A, B, C](xs: F[A])(f: A => B, g: B => C)(implicit functor: Functor[F]) = ???
+    def composition[F[_], A, B, C](xs: F[A])(f: A => B, g: B => C)(implicit functor: Functor[F]) =
+      functor.map(functor.map(xs)(g))(f) == functor.map(xs)(f andThen g)
 
   }
 
