@@ -6,7 +6,15 @@ package com.pnagarjuna.learning.scalaz
 object Demo {
 
   def main(args: Array[String]): Unit = {
-    ß
+    println("Scalaz")
+
+    implicit val greeting = "hello"
+
+    implicit val name = "Pamu Nagarjuna"
+
+    def greet(implicit greeting: String, name: String): String = s"${greeting} ${name}"
+
+    greet
   }
 
 }
